@@ -9,9 +9,10 @@
     --bg-color: #0d0e11;
     --card-bg: #16181e;
     --card-header: #1f222a;
-    --accent-color: #e63946;
-    --accent-hover: #c92a2a;
-    --accent-glow: rgba(230, 57, 70, 0.25);
+    /* 抽出したLUMIX ACADEMYの赤色を反映 */
+    --accent-color: #d63226;
+    --accent-hover: #b5271d;
+    --accent-glow: rgba(214, 50, 38, 0.25);
     --text-main: #f0f2f5;
     --text-muted: #8a909d;
     --border-color: #272a34;
@@ -46,7 +47,7 @@
   }
 
   body.flash-effect .time-display {
-    color: #e63946 !important;
+    color: #d63226 !important;
     text-shadow: none !important;
   }
 
@@ -129,7 +130,7 @@
   .edit-toggle-btn.active {
     border-color: var(--accent-color);
     color: var(--accent-color);
-    background: rgba(230, 57, 70, 0.1);
+    background: rgba(214, 50, 38, 0.1);
   }
 
   /* 2. シャッタースピード・プルダウン・入力欄 */
@@ -241,7 +242,7 @@
   }
 
   .filter-btn.active {
-    background: rgba(230, 57, 70, 0.15);
+    background: rgba(214, 50, 38, 0.15);
     border-color: var(--accent-color);
     color: var(--accent-color);
     font-weight: bold;
@@ -354,7 +355,7 @@
   }
 
   .timer-btn.running {
-    background: #8b0000;
+    background: #7a1811;
   }
 
   /* 撮影手順ガイドセクション */
@@ -426,7 +427,7 @@
     width: 100%;
     max-width: 320px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+    box-shadow: 0 10px 30px rgba(214, 50, 38, 0.3);
     animation: modalPop 0.25s ease-out;
   }
 
@@ -435,22 +436,18 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  .modal-icon {
-    font-size: 2rem;
-    margin-bottom: 8px;
-  }
-
   .modal-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: bold;
     color: #ffffff;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .modal-desc {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-bottom: 20px;
+    line-height: 1.5;
   }
 
   .modal-btn {
@@ -478,7 +475,7 @@
   <!-- 1. タイトル ＆ 編集モード切替 -->
   <header class="app-header">
     <h1 class="app-title">ND-Calc Pro</h1>
-    <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">⚙️ リストを編集</button>
+    <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">EDIT LIST</button>
   </header>
 
   <!-- 2. シャッタースピード -->
@@ -564,12 +561,11 @@
 
 </div>
 
-<!-- カッコいいカスタムポップアップダイアログ -->
+<!-- カスタムポップアップダイアログ -->
 <div class="custom-modal-overlay" id="custom-modal">
   <div class="custom-modal">
-    <div class="modal-icon">📸✨</div>
-    <div class="modal-title">露出完了</div>
-    <div class="modal-desc">タイマーが終了しました。<br>カメラのシャッターを閉じてください。</div>
+    <div class="modal-title">撮影が終了しました</div>
+    <div class="modal-desc">カメラのシャッターを閉じてください。</div>
     <button class="modal-btn" onclick="closeModal()">OK</button>
   </div>
 </div>
@@ -666,9 +662,9 @@ const ssData13 = [
 ];
 
 function loadStoredFilters() {
-  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v10');
-  const storedSquare = localStorage.getItem('ndcalc_square_filters_v10');
-  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v10');
+  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v12');
+  const storedSquare = localStorage.getItem('ndcalc_square_filters_v12');
+  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v12');
 
   fixedFilters = storedFixed ? JSON.parse(storedFixed) : [...defaultFixedFilters];
   squareFilters = storedSquare ? JSON.parse(storedSquare) : [...defaultSquareFilters];
@@ -676,9 +672,9 @@ function loadStoredFilters() {
 }
 
 function saveFilters() {
-  localStorage.setItem('ndcalc_fixed_filters_v10', JSON.stringify(fixedFilters));
-  localStorage.setItem('ndcalc_square_filters_v10', JSON.stringify(squareFilters));
-  localStorage.setItem('ndcalc_vnd_visible_v10', JSON.stringify(vndIsVisible));
+  localStorage.setItem('ndcalc_fixed_filters_v12', JSON.stringify(fixedFilters));
+  localStorage.setItem('ndcalc_square_filters_v12', JSON.stringify(squareFilters));
+  localStorage.setItem('ndcalc_vnd_visible_v12', JSON.stringify(vndIsVisible));
 }
 
 function init() {
@@ -854,11 +850,11 @@ function toggleEditMode() {
   if (isEditMode) {
     mainContainer.classList.add('edit-mode');
     toggleBtn.classList.add('active');
-    toggleBtn.innerText = '✔️ 完了';
+    toggleBtn.innerText = 'DONE';
   } else {
     mainContainer.classList.remove('edit-mode');
     toggleBtn.classList.remove('active');
-    toggleBtn.innerText = '⚙️ リストを編集';
+    toggleBtn.innerText = 'EDIT LIST';
   }
   renderUI();
 }
@@ -959,10 +955,10 @@ function toggleTimer() {
         
         playBeep();
         
-        // 画面を明るく（白く）フラッシュさせる演出
+        // 画面フラッシュ演出
         document.body.classList.add('flash-effect');
         
-        // カッコいいカスタムダイアログを表示
+        // カスタムダイアログ表示
         document.getElementById('custom-modal').classList.add('active');
         
         updateDisplay(calculatedSeconds);
@@ -972,7 +968,6 @@ function toggleTimer() {
 }
 
 function closeModal() {
-  // モーダルを閉じて、画面の明るさ（フラッシュ）を元に戻す
   document.getElementById('custom-modal').classList.remove('active');
   document.body.classList.remove('flash-effect');
 }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ND-Calc Pro</title>
 
-<!-- スマホのホーム画面アイコン設定（確実な相対パス「./」に変更） -->
+<!-- スマホのホーム画面アイコン設定 -->
 <link rel="icon" href="./favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 
@@ -14,13 +14,14 @@
     --bg-color: #0d0e11;
     --card-bg: #16181e;
     --card-header: #1f222a;
-    --accent-color: #d63226;
-    --accent-hover: #b5271d;
-    --accent-glow: rgba(214, 50, 38, 0.25);
+    --accent-color: #e74c3c;
+    --accent-hover: #c0392b;
+    --accent-glow: rgba(231, 76, 60, 0.25);
+    --amazon-color: #ff9900;
     --text-main: #f0f2f5;
     --text-muted: #8a909d;
     --border-color: #272a34;
-    --control-height: 52px;
+    --control-height: 50px;
   }
 
   * {
@@ -33,8 +34,8 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
-    padding: 12px 8px;
-    line-height: 1.5;
+    padding: 10px 8px;
+    line-height: 1.4;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -66,49 +67,26 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     flex: 1;
+    padding-bottom: 4px;
   }
 
   .card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 10px;
+    padding: 14px;
     position: relative;
     width: 100%;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  .card.hidden-card {
-    display: none;
-  }
-
-  .edit-mode .card.hidden-card {
-    display: block;
-    opacity: 0.4;
-    border-style: dashed;
   }
 
   .section-title {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 600;
-  }
-
-  .section-title-highlight {
-    color: var(--accent-color);
-    font-weight: bold;
-  }
-
-  .sub-note {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-weight: normal;
-    display: block;
-    margin-top: 2px;
   }
 
   /* 1. タイトル＆ロゴ */
@@ -116,44 +94,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 4px;
+    padding: 2px 4px;
     width: 100%;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .app-logo {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
-    border-radius: 6px;
+    border-radius: 5px;
   }
 
   .app-title {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     font-weight: 800;
     letter-spacing: 0.5px;
     color: var(--text-main);
-  }
-
-  .edit-toggle-btn {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    cursor: pointer;
-  }
-
-  .edit-toggle-btn.active {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    background: rgba(214, 50, 38, 0.1);
   }
 
   /* 2. シャッタースピード・プルダウン・入力欄 */
@@ -165,12 +127,18 @@
     color: var(--text-main);
     padding: 0 12px;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     outline: none;
   }
 
   select:focus, input:focus {
     border-color: var(--accent-color);
+  }
+
+  select option {
+    background-color: #20232c;
+    color: var(--text-main);
+    padding: 8px;
   }
 
   .bulb-input-container {
@@ -185,135 +153,58 @@
   }
 
   .bulb-input-container span {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     white-space: nowrap;
   }
 
-  /* 3. フィルター一覧表示 */
-  .filter-group-wrapper {
-    display: flex;
-    flex-direction: column;
+  /* 3. フィルター選択エリア（①～③・横3列） */
+  .filter-slot-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     width: 100%;
+    margin-top: 2px;
   }
 
-  .group-title {
-    font-size: 0.78rem;
+  .filter-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .slot-label {
+    font-size: 0.75rem;
     color: var(--accent-color);
     font-weight: bold;
-    margin: 12px 0 6px 0;
+    text-align: center;
     letter-spacing: 0.5px;
   }
 
-  .group-title:first-of-type {
-    margin-top: 4px;
-  }
-
-  .filter-group-wrapper.all-hidden {
-    display: none;
-  }
-
-  .filter-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    width: 100%;
-  }
-
-  .filter-btn-wrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-  }
-
-  .filter-btn-wrapper.hidden-wrapper {
-    display: none;
-  }
-
-  .edit-mode .filter-btn-wrapper.hidden-wrapper {
-    display: flex;
-  }
-
-  .filter-btn {
+  .filter-select {
     width: 100%;
     height: var(--control-height);
     background: #20232c;
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    padding: 4px;
+    padding: 0 4px;
     border-radius: 8px;
-    font-size: 0.82rem;
-    cursor: pointer;
+    font-size: 0.8rem;
+    outline: none;
     text-align: center;
-    user-select: none;
-    transition: all 0.15s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    text-align-last: center;
   }
 
-  .edit-mode .filter-btn-wrapper.hidden-wrapper .filter-btn {
-    opacity: 0.4;
-    border-style: dashed;
-  }
-
-  .filter-btn span.sub-label {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-bottom: 2px;
-  }
-
-  .filter-btn.active {
-    background: rgba(214, 50, 38, 0.15);
+  .filter-select:focus {
     border-color: var(--accent-color);
+    background: rgba(231, 76, 60, 0.08);
+  }
+
+  .filter-select.has-filter {
+    border-color: var(--accent-color);
+    background: rgba(231, 76, 60, 0.12);
     color: var(--accent-color);
     font-weight: bold;
-    box-shadow: 0 0 10px var(--accent-glow);
-  }
-
-  .filter-btn.active span.sub-label {
-    color: var(--accent-color);
-    opacity: 0.8;
-  }
-
-  /* 表示・非表示切替チェックボックス */
-  .visibility-checkbox-container {
-    display: none;
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    z-index: 10;
-  }
-
-  .edit-mode .visibility-checkbox-container {
-    display: block;
-  }
-
-  .visibility-checkbox-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--accent-color);
-  }
-
-  .card-visibility-container {
-    display: none;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
-  }
-
-  .edit-mode .card-visibility-container {
-    display: block;
-  }
-
-  .card-visibility-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--accent-color);
   }
 
   /* 4. 合成ND */
@@ -323,10 +214,10 @@
   }
 
   .nd-value {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: bold;
     color: var(--accent-color);
-    margin-top: 4px;
+    margin-top: 2px;
   }
 
   /* 5. 結果とタイマー */
@@ -334,20 +225,20 @@
     text-align: center;
     background: linear-gradient(180deg, var(--card-header) 0%, var(--card-bg) 100%);
     border: 1px solid #2d313c;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
 
   .time-display {
     font-family: "Courier New", Courier, monospace, sans-serif;
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #ffffff;
-    margin: 8px 0;
-    text-shadow: 0 0 12px var(--accent-glow);
+    margin: 6px 0;
+    text-shadow: 0 0 10px var(--accent-glow);
   }
 
   .time-unit {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--accent-color);
     margin: 0 2px 0 1px;
     font-weight: normal;
@@ -361,7 +252,7 @@
     border: none;
     border-radius: 8px;
     padding: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -369,7 +260,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .timer-btn:active {
@@ -378,30 +269,24 @@
   }
 
   .timer-btn.running {
-    background: #7a1811;
-  }
-
-  /* 編集モード時のタイマーボタン無効化 */
-  .edit-mode .timer-btn {
-    opacity: 0.4;
-    cursor: not-allowed;
-    pointer-events: none;
+    background: #962d22;
   }
 
   /* 撮影手順ガイドセクション */
   .guide-card {
     background: #12141a;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 8px;
+    padding: 12px;
     text-align: left;
+    margin-top: 10px;
   }
 
   .guide-title {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: block;
   }
 
@@ -411,38 +296,126 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .guide-steps li {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: var(--text-main);
     display: flex;
     align-items: flex-start;
-    line-height: 1.4;
+    line-height: 1.35;
   }
 
   .guide-steps li strong {
     color: var(--accent-color);
-    margin-right: 6px;
-    min-width: 18px;
+    margin-right: 5px;
+    min-width: 16px;
     display: inline-block;
+  }
+
+  /* 広告・Amazonリンクバナー用スタイル（Amazonイエロー仕様） */
+  .amazon-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .amazon-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  }
+
+  .amazon-card:hover {
+    border-color: var(--amazon-color);
+    transform: translateY(-1px);
+  }
+
+  .amazon-thumb-container {
+    width: 50px;
+    height: 50px;
+    background: #ffffff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    padding: 3px;
+  }
+
+  .amazon-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .amazon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .amazon-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--text-main);
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .amazon-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .amazon-badge {
+    background: var(--amazon-color);
+    color: #111111;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
   }
 
   /* フッター */
   .app-footer {
     width: 100%;
     max-width: 720px;
-    margin: 16px auto 8px auto;
-    font-size: 0.72rem;
+    margin: 4px auto 0 auto;
+    font-size: 0.7rem;
     color: var(--text-muted);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 4px;
     letter-spacing: 0.5px;
   }
 
-  /* カッコいいカスタムモーダルダイアログ */
+  .footer-version {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    opacity: 0.8;
+  }
+
+  /* モーダル */
   .custom-modal-overlay {
     display: none;
     position: fixed;
@@ -460,50 +433,44 @@
 
   .custom-modal-overlay.active {
     display: flex;
+    animation: fadeIn 0.2s ease-out;
   }
 
   .custom-modal {
     background: #1a1d26;
     border: 1px solid var(--accent-color);
-    border-radius: 14px;
-    padding: 24px;
+    border-radius: 12px;
+    padding: 20px;
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(214, 50, 38, 0.3);
-    animation: modalPop 0.25s ease-out;
-  }
-
-  @keyframes modalPop {
-    0% { transform: scale(0.85); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
   }
 
   .modal-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: bold;
     color: #ffffff;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .modal-desc {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
-    margin-bottom: 20px;
-    line-height: 1.5;
+    margin-bottom: 16px;
+    line-height: 1.4;
   }
 
   .modal-btn {
     width: 100%;
-    height: 44px;
+    height: 40px;
     background: var(--accent-color);
     color: #ffffff;
     border: none;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
   }
 
   .modal-btn:active {
@@ -515,14 +482,12 @@
 
 <div class="container" id="main-container">
 
-  <!-- 1. タイトル ＆ ロゴ ＆ 編集モード切替 -->
+  <!-- 1. タイトル ＆ ロゴ -->
   <header class="app-header">
     <div class="header-left">
-      <!-- ロゴ画像のパスも「./」を追加 -->
       <img src="./logo.png" alt="Logo" class="app-logo">
       <h1 class="app-title">ND-Calc Pro</h1>
     </div>
-    <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">EDIT LIST</button>
   </header>
 
   <!-- 2. シャッタースピード -->
@@ -536,56 +501,41 @@
     </div>
   </div>
 
-  <!-- 3. 固定NDフィルター選択エリア -->
-  <div class="card" id="fixed-card">
-    <span class="section-title">固定ND
-      <span class="sub-note">※タップでON/OFF</span>
-    </span>
-    <div class="card-visibility-container" id="fixed-visibility-container">
-      <input type="checkbox" id="fixed-card-checkbox" onchange="toggleCardVisibility('fixed', this.checked)" title="表示する">
-    </div>
+  <!-- 3. フィルター選択エリア（①～③・横3列） -->
+  <div class="card">
+    <span class="section-title">フィルター選択</span>
+    
+    <div class="filter-slot-container">
+      <div class="filter-slot">
+        <label class="slot-label">フィルター①</label>
+        <select id="filter-1" class="filter-select" onchange="calculate()">
+          <option value="1">なし</option>
+        </select>
+      </div>
 
-    <div id="filter-groups-container">
-      <!-- JavaScriptで自動描画されます -->
+      <div class="filter-slot">
+        <label class="slot-label">フィルター②</label>
+        <select id="filter-2" class="filter-select" onchange="calculate()">
+          <option value="1">なし</option>
+        </select>
+      </div>
+
+      <div class="filter-slot">
+        <label class="slot-label">フィルター③</label>
+        <select id="filter-3" class="filter-select" onchange="calculate()">
+          <option value="1">なし</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- 4. バリアブルND -->
-  <div class="card" id="vnd-card">
-    <label class="section-title section-title-highlight">■ バリアブルND (82mm / ND2-32可変)</label>
-    <select id="vnd-select" onchange="calculate()">
-      <option value="1">使用しない (OFF)</option>
-      <option value="2">ND2</option>
-      <option value="4">ND4</option>
-      <option value="8">ND8</option>
-      <option value="16">ND16</option>
-      <option value="32">ND32</option>
-    </select>
-    <div class="card-visibility-container" id="vnd-visibility-container">
-      <input type="checkbox" id="vnd-card-checkbox" onchange="toggleCardVisibility('vnd', this.checked)" title="表示する">
-    </div>
-  </div>
-
-  <!-- 5. 角型フィルター -->
-  <div class="card" id="square-card">
-    <span class="section-title section-title-highlight">■ 角型フィルター
-      <span class="sub-note">※タップでON/OFF</span>
-    </span>
-    <div class="card-visibility-container" id="square-visibility-container">
-      <input type="checkbox" id="square-card-checkbox" onchange="toggleCardVisibility('square', this.checked)" title="表示する">
-    </div>
-    <div class="filter-grid" id="square-filter-grid">
-      <!-- JavaScriptで自動描画されます -->
-    </div>
-  </div>
-
-  <!-- 6. 合成ND -->
+  <!-- 4. 合成ND -->
   <div class="card nd-summary-card">
     <span class="section-title">合成 ND 値</span>
     <div class="nd-value" id="total-nd">ND 1</div>
   </div>
 
-  <!-- 7. 結果とタイマー ＆ 撮影手順ガイド -->
+  <!-- 5. 結果とタイマー ＆ 撮影手順ガイド -->
   <div class="card result-card">
     <span class="section-title">計算された露出時間</span>
     <div class="time-display" id="display-time">
@@ -598,7 +548,7 @@
       <span class="guide-title">■ 撮影手順ガイド</span>
       <ul class="guide-steps">
         <li><strong>1.</strong> カメラでISO・f値・シャッタースピードを決めたあと、現在のカメラのシャッタースピードを設定する。</li>
-        <li><strong>2.</strong> 取り付けるNDフィルターを選択する。</li>
+        <li><strong>2.</strong> 使用するフィルターを①～③から選択する。</li>
         <li><strong>3.</strong> 計算された露出時間に変更するか、バルブ撮影に合わせる。</li>
         <li><strong>4.</strong> シャッターを押すタイミングに合わせて、タイマーを一緒にタップする。</li>
         <li><strong>5.</strong> タイマーが終わる瞬間に、カメラのシャッターも閉じる。</li>
@@ -606,13 +556,55 @@
     </div>
   </div>
 
-</div>
+  <!-- Amazonリンクセクション -->
+  <div class="amazon-section">
+    <a href="https://link.amazon/B0emfnUbv" target="_blank" rel="noopener noreferrer" class="amazon-card">
+      <div class="amazon-thumb-container">
+        <img src="https://m.media-amazon.com/images/I/71oMoTEALOL._AC_SL1000_.jpg" alt="マグネット式バリアブルND" class="amazon-thumb" onerror="this.src='./logo.png'">
+      </div>
+      <div class="amazon-info">
+        <span class="amazon-title">マグネット式 可変NDフィルター（瞬時着脱・バリアブルND）</span>
+        <div class="amazon-meta">
+          <span class="amazon-badge">Amazon</span>
+          <span>詳細をチェックする</span>
+        </div>
+      </div>
+    </a>
 
-<!-- フッター (ver 1.04) -->
-<footer class="app-footer">
-  <span>&copy; 2026 Image &amp; Creation</span>
-  <span>ver 1.04</span>
-</footer>
+    <a href="https://link.amazon/B0dg5FLPR" target="_blank" rel="noopener noreferrer" class="amazon-card">
+      <div class="amazon-thumb-container">
+        <img src="https://m.media-amazon.com/images/I/71iTDx01sML._AC_SL1500_.jpg" alt="ND1000000フィルター" class="amazon-thumb" onerror="this.src='./logo.png'">
+      </div>
+      <div class="amazon-info">
+        <span class="amazon-title">超極限スローシャッター・日食撮影用 ND1000000フィルター</span>
+        <div class="amazon-meta">
+          <span class="amazon-badge">Amazon</span>
+          <span>詳細をチェックする</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://link.amazon/B0jhnwIgH" target="_blank" rel="noopener noreferrer" class="amazon-card">
+      <div class="amazon-thumb-container">
+        <img src="https://m.media-amazon.com/images/I/61pzE8SfauL._AC_SL1500_.jpg" alt="マットボックス＆角型ND" class="amazon-thumb" onerror="this.src='./logo.png'">
+      </div>
+      <div class="amazon-info">
+        <span class="amazon-title">動画・写真兼用 マットボックス ＆ 角型NDフィルターセット</span>
+        <div class="amazon-meta">
+          <span class="amazon-badge">Amazon</span>
+          <span>詳細をチェックする</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- フッター -->
+  <footer class="app-footer">
+    <span>&copy; 2026 Image &amp; Creation</span>
+    <span class="footer-version">ver1.00</span>
+  </footer>
+
+</div>
 
 <!-- カスタムポップアップダイアログ -->
 <div class="custom-modal-overlay" id="custom-modal">
@@ -624,26 +616,28 @@
 </div>
 
 <script>
-const defaultFixedFilters = [
-  { id: 'f1', group: '77mm', name: 'PL (ND2-4相当)', val: 4, sub: '', isVisible: true },
-  { id: 'f2', group: '77mm', name: 'ND400', val: 400, sub: '', isVisible: true },
-  { id: 'f3', group: '77mm', name: 'ND1000', val: 1000, sub: '', isVisible: true },
-  { id: 'f4', group: '82mm', name: 'CPL (ND2-4相当)', val: 4, sub: '', isVisible: true },
-  { id: 'f5', group: '82mm', name: 'ND8', val: 8, sub: 'マグネット', isVisible: true },
-  { id: 'f6', group: '82mm', name: 'ND1000', val: 1000, sub: 'マグネット', isVisible: true },
-  { id: 'f7', group: '82mm', name: 'ND1000000', val: 1000000, sub: '', isVisible: true }
+const filterList = [
+  { name: 'PL (ND2-4相当)', val: 4 },
+  { name: 'ND2 (1段)', val: 2 },
+  { name: 'ND4 (2段)', val: 4 },
+  { name: 'ND8 (3段)', val: 8 },
+  { name: 'ND16 (4段)', val: 16 },
+  { name: 'ND32 (5段)', val: 32 },
+  { name: 'ND64 (6段)', val: 64 },
+  { name: 'ND100 (6.6段)', val: 100 },
+  { name: 'ND128 (7段)', val: 128 },
+  { name: 'ND256 (8段)', val: 256 },
+  { name: 'ND400 (8.6段)', val: 400 },
+  { name: 'ND512 (9段)', val: 512 },
+  { name: 'ND1000 (10段)', val: 1000 },
+  { name: 'ND2000 (11段)', val: 2000 },
+  { name: 'ND4000 (12段)', val: 4000 },
+  { name: 'ND8000 (13段)', val: 8000 },
+  { name: 'ND10000 (13.3段)', val: 10000 },
+  { name: 'ND32000 (15段)', val: 32000 },
+  { name: 'ND100000 (16.6段)', val: 100000 },
+  { name: 'ND1000000 (20段)', val: 1000000 }
 ];
-
-const defaultSquareFilters = [
-  { id: 's1', group: '角型', name: 'ND4', val: 4, sub: '', isVisible: true },
-  { id: 's2', group: '角型', name: 'ND32', val: 32, sub: '', isVisible: true }
-];
-
-let fixedFilters = [];
-let squareFilters = [];
-let vndIsVisible = true;
-let activeFilterIds = new Set();
-let isEditMode = false;
 
 let calculatedSeconds = 1;
 let timerInterval = null;
@@ -714,25 +708,7 @@ const ssData13 = [
   { label: "60 秒", val: 60 }
 ];
 
-function loadStoredFilters() {
-  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v13');
-  const storedSquare = localStorage.getItem('ndcalc_square_filters_v13');
-  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v13');
-
-  fixedFilters = storedFixed ? JSON.parse(storedFixed) : [...defaultFixedFilters];
-  squareFilters = storedSquare ? JSON.parse(storedSquare) : [...defaultSquareFilters];
-  vndIsVisible = storedVndVis !== null ? JSON.parse(storedVndVis) : true;
-}
-
-function saveFilters() {
-  localStorage.setItem('ndcalc_fixed_filters_v13', JSON.stringify(fixedFilters));
-  localStorage.setItem('ndcalc_square_filters_v13', JSON.stringify(squareFilters));
-  localStorage.setItem('ndcalc_vnd_visible_v13', JSON.stringify(vndIsVisible));
-}
-
 function init() {
-  loadStoredFilters();
-
   const ssSelect = document.getElementById('base-ss');
   ssSelect.innerHTML = '';
   
@@ -751,180 +727,35 @@ function init() {
   bulbOpt.innerText = "B (バルブ露光)";
   ssSelect.appendChild(bulbOpt);
 
-  renderUI();
-  calculate();
-}
-
-function renderUI() {
-  const container = document.getElementById('filter-groups-container');
-  container.innerHTML = '';
-
-  const groups = {};
-  fixedFilters.forEach(item => {
-    if (!groups[item.group]) groups[item.group] = [];
-    groups[item.group].push(item);
-  });
-
-  Object.keys(groups).forEach(groupName => {
-    const groupWrapper = document.createElement('div');
-    groupWrapper.className = 'filter-group-wrapper';
-
-    const groupTitle = document.createElement('div');
-    groupTitle.className = 'group-title';
-    groupTitle.innerText = `■ ${groupName}`;
-    groupWrapper.appendChild(groupTitle);
-
-    const grid = document.createElement('div');
-    grid.className = 'filter-grid';
-
-    let visibleCountInGroup = 0;
-    groups[groupName].forEach(item => {
-      const el = createFilterElement(item);
-      grid.appendChild(el);
-      if (item.isVisible) visibleCountInGroup++;
+  ['filter-1', 'filter-2', 'filter-3'].forEach(id => {
+    const select = document.getElementById(id);
+    select.innerHTML = '<option value="1">なし</option>';
+    filterList.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.val;
+      opt.innerText = f.name;
+      select.appendChild(opt);
     });
-
-    groupWrapper.appendChild(grid);
-
-    if (visibleCountInGroup === 0) {
-      groupWrapper.classList.add('all-hidden');
-    }
-
-    container.appendChild(groupWrapper);
   });
 
-  const fixedCard = document.getElementById('fixed-card');
-  const fixedCheckbox = document.getElementById('fixed-card-checkbox');
-  let hasAnyFixedVisible = fixedFilters.some(f => f.isVisible);
-  fixedCheckbox.checked = hasAnyFixedVisible;
-
-  const vndCard = document.getElementById('vnd-card');
-  const vndCheckbox = document.getElementById('vnd-card-checkbox');
-  vndCheckbox.checked = vndIsVisible;
-
-  if (!vndIsVisible) {
-    vndCard.classList.add('hidden-card');
-  } else {
-    vndCard.classList.remove('hidden-card');
-  }
-
-  const squareGrid = document.getElementById('square-filter-grid');
-  squareGrid.innerHTML = '';
-  const squareCard = document.getElementById('square-card');
-  const squareCheckbox = document.getElementById('square-card-checkbox');
-  let hasAnySquareVisible = squareFilters.some(f => f.isVisible);
-  squareCheckbox.checked = hasAnySquareVisible;
-
-  squareFilters.forEach(item => {
-    const el = createFilterElement(item);
-    squareGrid.appendChild(el);
-  });
-
-  if (!hasAnySquareVisible) {
-    squareCard.classList.add('hidden-card');
-  } else {
-    squareCard.classList.remove('hidden-card');
-  }
-}
-
-function createFilterElement(item) {
-  const wrapper = document.createElement('div');
-  wrapper.className = `filter-btn-wrapper ${!item.isVisible ? 'hidden-wrapper' : ''}`;
-
-  const btn = document.createElement('div');
-  btn.className = `filter-btn ${activeFilterIds.has(item.id) ? 'active' : ''}`;
-  btn.setAttribute('data-id', item.id);
-  btn.setAttribute('data-value', item.val);
-  
-  let subHtml = item.sub ? `<span class="sub-label">${item.sub}</span>` : '';
-  btn.innerHTML = `${subHtml}${item.name}`;
-
-  btn.onclick = () => {
-    if (isEditMode) return;
-    if (activeFilterIds.has(item.id)) {
-      activeFilterIds.delete(item.id);
-      btn.classList.remove('active');
-    } else {
-      activeFilterIds.add(item.id);
-      btn.classList.add('active');
-    }
-    calculate();
-  };
-
-  const checkboxContainer = document.createElement('div');
-  checkboxContainer.className = 'visibility-checkbox-container';
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.checked = item.isVisible;
-  checkbox.title = "表示する";
-  checkbox.onchange = (e) => {
-    e.stopPropagation();
-    item.isVisible = checkbox.checked;
-    if (!item.isVisible) {
-      activeFilterIds.delete(item.id);
-    }
-    saveFilters();
-    renderUI();
-    calculate();
-  };
-
-  checkboxContainer.appendChild(checkbox);
-
-  wrapper.appendChild(btn);
-  wrapper.appendChild(checkboxContainer);
-  return wrapper;
-}
-
-function toggleCardVisibility(type, isVisible) {
-  if (type === 'fixed') {
-    fixedFilters.forEach(f => f.isVisible = isVisible);
-  } else if (type === 'square') {
-    squareFilters.forEach(f => f.isVisible = isVisible);
-    if (!isVisible) {
-      squareFilters.forEach(f => activeFilterIds.delete(f.id));
-    }
-  } else if (type === 'vnd') {
-    vndIsVisible = isVisible;
-    if (!isVisible) {
-      document.getElementById('vnd-select').value = "1";
-    }
-  }
-  saveFilters();
-  renderUI();
   calculate();
-}
-
-function toggleEditMode() {
-  isEditMode = !isEditMode;
-  const mainContainer = document.getElementById('main-container');
-  const toggleBtn = document.getElementById('edit-toggle-btn');
-
-  if (isEditMode) {
-    mainContainer.classList.add('edit-mode');
-    toggleBtn.classList.add('active');
-    toggleBtn.innerText = 'DONE';
-  } else {
-    mainContainer.classList.remove('edit-mode');
-    toggleBtn.classList.remove('active');
-    toggleBtn.innerText = 'EDIT LIST';
-  }
-  renderUI();
 }
 
 function calculate() {
-  let totalND = 1;
+  const v1 = parseFloat(document.getElementById('filter-1').value) || 1;
+  const v2 = parseFloat(document.getElementById('filter-2').value) || 1;
+  const v3 = parseFloat(document.getElementById('filter-3').value) || 1;
 
-  const allFilters = [...fixedFilters, ...squareFilters];
-  activeFilterIds.forEach(id => {
-    const item = allFilters.find(f => f.id === id);
-    if (item && item.isVisible) totalND *= item.val;
+  ['filter-1', 'filter-2', 'filter-3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (parseFloat(el.value) > 1) {
+      el.classList.add('has-filter');
+    } else {
+      el.classList.remove('has-filter');
+    }
   });
 
-  if (vndIsVisible) {
-    const vndValue = parseFloat(document.getElementById('vnd-select').value) || 1;
-    totalND *= vndValue;
-  }
+  let totalND = v1 * v2 * v3;
 
   const baseSSSelect = document.getElementById('base-ss');
   const bulbContainer = document.getElementById('bulb-container');
@@ -980,8 +811,6 @@ function playBeep() {
 }
 
 function toggleTimer() {
-  if (isEditMode) return;
-
   const btn = document.getElementById('timer-btn');
 
   if (isTimerRunning) {

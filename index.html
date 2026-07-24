@@ -31,6 +31,23 @@
     padding: 12px 8px;
     line-height: 1.5;
     min-height: 100vh;
+    transition: background-color 0.3s ease;
+  }
+
+  /* 完了時の画面フラッシュ用クラス */
+  body.flash-effect {
+    background-color: #ffffff !important;
+  }
+
+  body.flash-effect .card {
+    background-color: #f0f0f0 !important;
+    color: #111111 !important;
+    border-color: #cccccc !important;
+  }
+
+  body.flash-effect .time-display {
+    color: #e63946 !important;
+    text-shadow: none !important;
   }
 
   .container {
@@ -49,6 +66,7 @@
     padding: 16px;
     position: relative;
     width: 100%;
+    transition: background 0.3s ease, color 0.3s ease;
   }
 
   .card.hidden-card {
@@ -379,6 +397,78 @@
     min-width: 18px;
     display: inline-block;
   }
+
+  /* カッコいいカスタムモーダルダイアログ */
+  .custom-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .custom-modal-overlay.active {
+    display: flex;
+  }
+
+  .custom-modal {
+    background: #1a1d26;
+    border: 1px solid var(--accent-color);
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+    animation: modalPop 0.25s ease-out;
+  }
+
+  @keyframes modalPop {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }
+
+  .modal-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .modal-btn {
+    width: 100%;
+    height: 44px;
+    background: var(--accent-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .modal-btn:active {
+    background: var(--accent-hover);
+  }
 </style>
 </head>
 <body>
@@ -459,7 +549,7 @@
     </div>
     <button class="timer-btn" id="timer-btn" onclick="toggleTimer()">START TIMER</button>
 
-    <!-- タイマーの下に追加した撮影手順ガイド -->
+    <!-- 撮影手順ガイド -->
     <div class="guide-card">
       <span class="guide-title">■ 撮影手順ガイド</span>
       <ul class="guide-steps">
@@ -472,6 +562,16 @@
     </div>
   </div>
 
+</div>
+
+<!-- カッコいいカスタムポップアップダイアログ -->
+<div class="custom-modal-overlay" id="custom-modal">
+  <div class="custom-modal">
+    <div class="modal-icon">📸✨</div>
+    <div class="modal-title">露出完了</div>
+    <div class="modal-desc">タイマーが終了しました。<br>カメラのシャッターを閉じてください。</div>
+    <button class="modal-btn" onclick="closeModal()">OK</button>
+  </div>
 </div>
 
 <script>
@@ -856,12 +956,25 @@ function toggleTimer() {
         isTimerRunning = false;
         btn.innerText = "START TIMER";
         btn.classList.remove('running');
+        
         playBeep();
-        alert("露光が完了しました！");
+        
+        // 画面を明るく（白く）フラッシュさせる演出
+        document.body.classList.add('flash-effect');
+        
+        // カッコいいカスタムダイアログを表示
+        document.getElementById('custom-modal').classList.add('active');
+        
         updateDisplay(calculatedSeconds);
       }
     }, 1000);
   }
+}
+
+function closeModal() {
+  // モーダルを閉じて、画面の明るさ（フラッシュ）を元に戻す
+  document.getElementById('custom-modal').classList.remove('active');
+  document.body.classList.remove('flash-effect');
 }
 
 window.onload = init;

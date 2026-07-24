@@ -89,7 +89,7 @@
     font-weight: 600;
   }
 
-  /* 1. タイトル＆ロゴ */
+  /* 1. タイトル＆ロゴ ＆ 設定ボタン */
   .app-header {
     display: flex;
     justify-content: space-between;
@@ -116,6 +116,26 @@
     font-weight: 800;
     letter-spacing: 0.5px;
     color: var(--text-main);
+  }
+
+  .settings-btn {
+    background: #20232c;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+  }
+
+  .settings-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
   }
 
   /* 2. シャッタースピード・プルダウン・入力欄 */
@@ -415,7 +435,7 @@
     opacity: 0.8;
   }
 
-  /* モーダル */
+  /* ポップアップダイアログ共通 */
   .custom-modal-overlay {
     display: none;
     position: fixed;
@@ -476,18 +496,146 @@
   .modal-btn:active {
     background: var(--accent-hover);
   }
+
+  /* フィルター設定モーダル固有スタイル */
+  .settings-modal {
+    max-width: 420px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border-color: var(--border-color);
+  }
+
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .settings-header h3 {
+    font-size: 1rem;
+    color: #ffffff;
+  }
+
+  .settings-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .settings-body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+    margin-bottom: 12px;
+  }
+
+  .filter-toggle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #20232c;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  .filter-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .filter-toggle-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--text-main);
+  }
+
+  .filter-toggle-val {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* カスタムスイッチ */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #2c3140;
+    transition: .2s;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  .settings-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-secondary {
+    background: #20232c;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
 </style>
 </head>
 <body>
 
 <div class="container" id="main-container">
 
-  <!-- 1. タイトル ＆ ロゴ -->
+  <!-- 1. タイトル ＆ ロゴ ＆ 設定ボタン -->
   <header class="app-header">
     <div class="header-left">
       <img src="./logo.png" alt="Logo" class="app-logo">
       <h1 class="app-title">ND-Calc Pro</h1>
     </div>
+    <button class="settings-btn" onclick="openSettings()">
+      <span>⚙️ フィルター設定</span>
+    </button>
   </header>
 
   <!-- 2. シャッタースピード -->
@@ -606,7 +754,28 @@
 
 </div>
 
-<!-- カスタムポップアップダイアログ -->
+<!-- フィルター設定モーダル -->
+<div class="custom-modal-overlay" id="settings-modal">
+  <div class="custom-modal settings-modal">
+    <div class="settings-header">
+      <h3>所有フィルター管理</h3>
+      <button class="settings-close-btn" onclick="closeSettings()">&times;</button>
+    </div>
+    <div class="modal-desc" style="text-align: left; margin-bottom: 8px;">
+      所持しているフィルターの有効/無効を切り替えます。無効にしたフィルターは選択肢に表示されません。
+    </div>
+    <div class="settings-body" id="filter-settings-list">
+      <!-- 動的生成 -->
+    </div>
+    <div class="settings-actions">
+      <button class="modal-btn btn-secondary" onclick="toggleAllFilters(false)">すべてOFF</button>
+      <button class="modal-btn btn-secondary" onclick="toggleAllFilters(true)">すべてON</button>
+      <button class="modal-btn" onclick="closeSettings()">完了</button>
+    </div>
+  </div>
+</div>
+
+<!-- 完了ポップアップダイアログ -->
 <div class="custom-modal-overlay" id="custom-modal">
   <div class="custom-modal">
     <div class="modal-title">撮影が終了しました</div>
@@ -616,28 +785,53 @@
 </div>
 
 <script>
-const filterList = [
-  { name: 'PL (ND2-4相当)', val: 4 },
-  { name: 'ND2 (1段)', val: 2 },
-  { name: 'ND4 (2段)', val: 4 },
-  { name: 'ND8 (3段)', val: 8 },
-  { name: 'ND16 (4段)', val: 16 },
-  { name: 'ND32 (5段)', val: 32 },
-  { name: 'ND64 (6段)', val: 64 },
-  { name: 'ND100 (6.6段)', val: 100 },
-  { name: 'ND128 (7段)', val: 128 },
-  { name: 'ND256 (8段)', val: 256 },
-  { name: 'ND400 (8.6段)', val: 400 },
-  { name: 'ND512 (9段)', val: 512 },
-  { name: 'ND1000 (10段)', val: 1000 },
-  { name: 'ND2000 (11段)', val: 2000 },
-  { name: 'ND4000 (12段)', val: 4000 },
-  { name: 'ND8000 (13段)', val: 8000 },
-  { name: 'ND10000 (13.3段)', val: 10000 },
-  { name: 'ND32000 (15段)', val: 32000 },
-  { name: 'ND100000 (16.6段)', val: 100000 },
-  { name: 'ND1000000 (20段)', val: 1000000 }
+const defaultFilters = [
+  { id: 'f_pl', name: 'PL (ND2-4相当)', val: 4, active: true },
+  { id: 'f_nd2', name: 'ND2 (1段)', val: 2, active: true },
+  { id: 'f_nd4', name: 'ND4 (2段)', val: 4, active: true },
+  { id: 'f_nd8', name: 'ND8 (3段)', val: 8, active: true },
+  { id: 'f_nd16', name: 'ND16 (4段)', val: 16, active: true },
+  { id: 'f_nd32', name: 'ND32 (5段)', val: 32, active: true },
+  { id: 'f_nd64', name: 'ND64 (6段)', val: 64, active: true },
+  { id: 'f_nd100', name: 'ND100 (6.6段)', val: 100, active: true },
+  { id: 'f_nd128', name: 'ND128 (7段)', val: 128, active: true },
+  { id: 'f_nd256', name: 'ND256 (8段)', val: 256, active: true },
+  { id: 'f_nd400', name: 'ND400 (8.6段)', val: 400, active: true },
+  { id: 'f_nd512', name: 'ND512 (9段)', val: 512, active: true },
+  { id: 'f_nd1000', name: 'ND1000 (10段)', val: 1000, active: true },
+  { id: 'f_nd2000', name: 'ND2000 (11段)', val: 2000, active: true },
+  { id: 'f_nd4000', name: 'ND4000 (12段)', val: 4000, active: true },
+  { id: 'f_nd8000', name: 'ND8000 (13段)', val: 8000, active: true },
+  { id: 'f_nd10000', name: 'ND10000 (13.3段)', val: 10000, active: true },
+  { id: 'f_nd32000', name: 'ND32000 (15段)', val: 32000, active: true },
+  { id: 'f_nd100000', name: 'ND100000 (16.6段)', val: 100000, active: true },
+  { id: 'f_nd1000000', name: 'ND1000000 (20段)', val: 1000000, active: true }
 ];
+
+let filterList = [];
+
+// ローカルストレージから設定をロード、なければデフォルトを使用
+function loadFilterSettings() {
+  const saved = localStorage.getItem('nd_calc_filters_v1');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      // defaultFiltersベースに保ちつつactive状態を復元
+      filterList = defaultFilters.map(df => {
+        const found = parsed.find(p => p.id === df.id);
+        return { ...df, active: found ? found.active : true };
+      });
+    } catch(e) {
+      filterList = JSON.parse(JSON.stringify(defaultFilters));
+    }
+  } else {
+    filterList = JSON.parse(JSON.stringify(defaultFilters));
+  }
+}
+
+function saveFilterSettings() {
+  localStorage.setItem('nd_calc_filters_v1', JSON.stringify(filterList.map(f => ({ id: f.id, active: f.active }))));
+}
 
 let calculatedSeconds = 1;
 let timerInterval = null;
@@ -709,6 +903,8 @@ const ssData13 = [
 ];
 
 function init() {
+  loadFilterSettings();
+
   const ssSelect = document.getElementById('base-ss');
   ssSelect.innerHTML = '';
   
@@ -727,18 +923,78 @@ function init() {
   bulbOpt.innerText = "B (バルブ露光)";
   ssSelect.appendChild(bulbOpt);
 
+  updateFilterSelects();
+  calculate();
+}
+
+function updateFilterSelects() {
   ['filter-1', 'filter-2', 'filter-3'].forEach(id => {
     const select = document.getElementById(id);
+    const currentVal = select.value; // 現在選ばれている値保持を試みる
+    
     select.innerHTML = '<option value="1">なし</option>';
-    filterList.forEach(f => {
+    
+    filterList.filter(f => f.active).forEach(f => {
       const opt = document.createElement('option');
       opt.value = f.val;
       opt.innerText = f.name;
       select.appendChild(opt);
     });
-  });
 
+    // もし選択中だった値が非アクティブになっていなければ復元、なければ「なし」に
+    const exists = Array.from(select.options).some(opt => opt.value === currentVal);
+    if (exists) {
+      select.value = currentVal;
+    } else {
+      select.value = "1";
+    }
+  });
+}
+
+function openSettings() {
+  renderSettingsList();
+  document.getElementById('settings-modal').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('active');
+  saveFilterSettings();
+  updateFilterSelects();
   calculate();
+}
+
+function renderSettingsList() {
+  const container = document.getElementById('filter-settings-list');
+  container.innerHTML = '';
+
+  filterList.forEach((f, idx) => {
+    const item = document.createElement('div');
+    item.className = 'filter-toggle-item';
+    
+    item.innerHTML = `
+      <div class="filter-toggle-info">
+        <span class="filter-toggle-name">${f.name}</span>
+        <span class="filter-toggle-val">倍率: ${f.val}</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" ${f.active ? 'checked' : ''} onchange="onFilterToggleChange('${f.id}', this.checked)">
+        <span class="slider"></span>
+      </label>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function onFilterToggleChange(id, checked) {
+  const target = filterList.find(f => f.id === id);
+  if (target) {
+    target.active = checked;
+  }
+}
+
+function toggleAllFilters(status) {
+  filterList.forEach(f => f.active = status);
+  renderSettingsList();
 }
 
 function calculate() {

@@ -381,6 +381,13 @@
     background: #7a1811;
   }
 
+  /* 編集モード時のタイマーボタン無効化 */
+  .edit-mode .timer-btn {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
   /* 撮影手順ガイドセクション */
   .guide-card {
     background: #12141a;
@@ -973,6 +980,8 @@ function playBeep() {
 }
 
 function toggleTimer() {
+  if (isEditMode) return;
+
   const btn = document.getElementById('timer-btn');
 
   if (isTimerRunning) {

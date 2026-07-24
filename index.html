@@ -9,7 +9,7 @@
     --bg-color: #0d0e11;
     --card-bg: #16181e;
     --card-header: #1f222a;
-    /* 抽出したLUMIX ACADEMYの赤色を反映 */
+    /* LUMIX ACADEMYの赤色を反映 */
     --accent-color: #d63226;
     --accent-hover: #b5271d;
     --accent-glow: rgba(214, 50, 38, 0.25);
@@ -32,6 +32,8 @@
     padding: 12px 8px;
     line-height: 1.5;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     transition: background-color 0.3s ease;
   }
 
@@ -58,6 +60,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex: 1;
   }
 
   .card {
@@ -399,6 +402,20 @@
     display: inline-block;
   }
 
+  /* フッター（バージョン＆コピーライト・右寄せ） */
+  .app-footer {
+    width: 100%;
+    max-width: 720px;
+    margin: 16px auto 8px auto;
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    letter-spacing: 0.5px;
+  }
+
   /* カッコいいカスタムモーダルダイアログ */
   .custom-modal-overlay {
     display: none;
@@ -561,6 +578,12 @@
 
 </div>
 
+<!-- フッター（バージョン＆コピーライト） -->
+<footer class="app-footer">
+  <div>ver 1.00</div>
+  <div>&copy; Image &amp; Creation</div>
+</footer>
+
 <!-- カスタムポップアップダイアログ -->
 <div class="custom-modal-overlay" id="custom-modal">
   <div class="custom-modal">
@@ -662,9 +685,9 @@ const ssData13 = [
 ];
 
 function loadStoredFilters() {
-  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v12');
-  const storedSquare = localStorage.getItem('ndcalc_square_filters_v12');
-  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v12');
+  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v13');
+  const storedSquare = localStorage.getItem('ndcalc_square_filters_v13');
+  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v13');
 
   fixedFilters = storedFixed ? JSON.parse(storedFixed) : [...defaultFixedFilters];
   squareFilters = storedSquare ? JSON.parse(storedSquare) : [...defaultSquareFilters];
@@ -672,9 +695,9 @@ function loadStoredFilters() {
 }
 
 function saveFilters() {
-  localStorage.setItem('ndcalc_fixed_filters_v12', JSON.stringify(fixedFilters));
-  localStorage.setItem('ndcalc_square_filters_v12', JSON.stringify(squareFilters));
-  localStorage.setItem('ndcalc_vnd_visible_v12', JSON.stringify(vndIsVisible));
+  localStorage.setItem('ndcalc_fixed_filters_v13', JSON.stringify(fixedFilters));
+  localStorage.setItem('ndcalc_square_filters_v13', JSON.stringify(squareFilters));
+  localStorage.setItem('ndcalc_vnd_visible_v13', JSON.stringify(vndIsVisible));
 }
 
 function init() {

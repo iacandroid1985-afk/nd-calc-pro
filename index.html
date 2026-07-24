@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ND-Calc Pro</title>
+
+<!-- スマホのホーム画面アイコン設定 -->
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
 <style>
   :root {
     --bg-color: #0d0e11;
@@ -106,13 +111,26 @@
     margin-top: 2px;
   }
 
-  /* 1. タイトル */
+  /* 1. タイトル＆ロゴ */
   .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 4px 4px;
     width: 100%;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .app-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 6px;
   }
 
   .app-title {
@@ -490,9 +508,12 @@
 
 <div class="container" id="main-container">
 
-  <!-- 1. タイトル ＆ 編集モード切替 -->
+  <!-- 1. タイトル ＆ ロゴ ＆ 編集モード切替 -->
   <header class="app-header">
-    <h1 class="app-title">ND-Calc Pro</h1>
+    <div class="header-left">
+      <img src="logo.png" alt="Logo" class="app-logo">
+      <h1 class="app-title">ND-Calc Pro</h1>
+    </div>
     <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">EDIT LIST</button>
   </header>
 
@@ -579,10 +600,10 @@
 
 </div>
 
-<!-- フッター (ver 1.01) -->
+<!-- フッター (ver 1.03) -->
 <footer class="app-footer">
   <span>&copy; 2026 Image &amp; Creation</span>
-  <span>ver 1.01</span>
+  <span>ver 1.03</span>
 </footer>
 
 <!-- カスタムポップアップダイアログ -->
@@ -979,11 +1000,9 @@ function toggleTimer() {
         
         playBeep();
         
-        // 1. まず画面を1秒間真っ白にフラッシュさせる
         document.body.classList.add('flash-effect');
         
         setTimeout(() => {
-          // 2. 1秒経過後にフラッシュを戻し、カスタムダイアログを表示する
           document.body.classList.remove('flash-effect');
           document.getElementById('custom-modal').classList.add('active');
           updateDisplay(calculatedSeconds);

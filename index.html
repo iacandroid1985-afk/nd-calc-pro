@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ND-Calc Pro</title>
 
-<!-- スマホのホーム画面アイコン設定 -->
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- スマホのホーム画面アイコン設定（確実な相対パス「./」に変更） -->
+<link rel="icon" href="./favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
 
 <style>
   :root {
@@ -511,7 +511,8 @@
   <!-- 1. タイトル ＆ ロゴ ＆ 編集モード切替 -->
   <header class="app-header">
     <div class="header-left">
-      <img src="logo.png" alt="Logo" class="app-logo">
+      <!-- ロゴ画像のパスも「./」を追加 -->
+      <img src="./logo.png" alt="Logo" class="app-logo">
       <h1 class="app-title">ND-Calc Pro</h1>
     </div>
     <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">EDIT LIST</button>

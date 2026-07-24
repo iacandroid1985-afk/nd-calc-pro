@@ -34,23 +34,26 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
   }
 
-  /* 完了時の画面フラッシュ用クラス */
+  /* 終了時の強力なフラッシュ演出 */
   body.flash-effect {
     background-color: #ffffff !important;
   }
 
   body.flash-effect .card {
-    background-color: #f0f0f0 !important;
-    color: #111111 !important;
-    border-color: #cccccc !important;
+    background-color: #ffffff !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: none !important;
   }
 
-  body.flash-effect .time-display {
-    color: #d63226 !important;
-    text-shadow: none !important;
+  body.flash-effect * {
+    color: transparent !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
   }
 
   .container {
@@ -977,13 +980,15 @@ function toggleTimer() {
         
         playBeep();
         
-        // 画面フラッシュ演出
+        // 1. まず画面を1秒間真っ白にフラッシュさせる
         document.body.classList.add('flash-effect');
         
-        // カスタムダイアログ表示
-        document.getElementById('custom-modal').classList.add('active');
-        
-        updateDisplay(calculatedSeconds);
+        setTimeout(() => {
+          // 2. 1秒経過後にフラッシュを戻し、カスタムダイアログを表示する
+          document.body.classList.remove('flash-effect');
+          document.getElementById('custom-modal').classList.add('active');
+          updateDisplay(calculatedSeconds);
+        }, 1000);
       }
     }, 1000);
   }

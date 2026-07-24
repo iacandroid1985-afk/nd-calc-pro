@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ND-Calc Pro</title>
+<style>
+  :root {
+    --bg-color: #0d0e11;
+    --card-bg: #16181e;
+    --card-header: #1f222a;
+    --accent-color: #e63946;
+    --accent-hover: #c92a2a;
+    --accent-glow: rgba(230, 57, 70, 0.25);
+    --text-main: #f0f2f5;
+    --text-muted: #8a909d;
+    --border-color: #272a34;
+    --control-height: 52px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    padding: 12px 8px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px; /* 横幅を広げ、タブレットやPCでも見やすく調整 */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    width: 100%;
+  }
+
+  .card.hidden-card {
+    display: none;
+  }
+
+  .edit-mode .card.hidden-card {
+    display: block;
+    opacity: 0.4;
+    border-style: dashed;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .section-title-highlight {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+
+  .sub-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: normal;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* 1. タイトル */
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px;
+    width: 100%;
+  }
+
+  .app-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+  }
+
+  .edit-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  .edit-toggle-btn.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(230, 57, 70, 0.1);
+  }
+
+  /* 2. シャッタースピード・プルダウン・入力欄 */
+  select, input[type="number"] {
+    width: 100%;
+    height: var(--control-height);
+    background: #20232c;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  select:focus, input:focus {
+    border-color: var(--accent-color);
+  }
+
+  .bulb-input-container {
+    display: none;
+    margin-top: 8px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bulb-input-container.active {
+    display: flex;
+  }
+
+  .bulb-input-container span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* 3. フィルター一覧表示 */
+  .filter-group-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .group-title {
+    font-size: 0.78rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin: 12px 0 6px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .group-title:first-of-type {
+    margin-top: 4px;
+  }
+
+  .filter-group-wrapper.all-hidden {
+    display: none;
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+
+  .filter-btn-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+  }
+
+  .filter-btn-wrapper.hidden-wrapper {
+    display: none;
+  }
+
+  .edit-mode .filter-btn-wrapper.hidden-wrapper {
+    display: flex;
+  }
+
+  .filter-btn {
+    width: 100%;
+    height: var(--control-height);
+    background: #20232c;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 4px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .edit-mode .filter-btn-wrapper.hidden-wrapper .filter-btn {
+    opacity: 0.4;
+    border-style: dashed;
+  }
+
+  .filter-btn span.sub-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  .filter-btn.active {
+    background: rgba(230, 57, 70, 0.15);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .filter-btn.active span.sub-label {
+    color: var(--accent-color);
+    opacity: 0.8;
+  }
+
+  /* 表示・非表示切替チェックボックス */
+  .visibility-checkbox-container {
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    z-index: 10;
+  }
+
+  .edit-mode .visibility-checkbox-container {
+    display: block;
+  }
+
+  .visibility-checkbox-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+  }
+
+  .card-visibility-container {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+  }
+
+  .edit-mode .card-visibility-container {
+    display: block;
+  }
+
+  .card-visibility-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+  }
+
+  /* 4. 合成ND */
+  .nd-summary-card {
+    text-align: center;
+    background: #1a1c23;
+  }
+
+  .nd-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-top: 4px;
+  }
+
+  /* 5. 結果とタイマー */
+  .result-card {
+    text-align: center;
+    background: linear-gradient(180deg, var(--card-header) 0%, var(--card-bg) 100%);
+    border: 1px solid #2d313c;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .time-display {
+    font-family: "Courier New", Courier, monospace, sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 8px 0;
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .time-unit {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    margin: 0 2px 0 1px;
+    font-weight: normal;
+  }
+
+  .timer-btn {
+    width: 100%;
+    height: var(--control-height);
+    background: var(--accent-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timer-btn:active {
+    background: var(--accent-hover);
+    transform: scale(0.98);
+  }
+
+  .timer-btn.running {
+    background: #8b0000;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="main-container">
+
+  <!-- 1. タイトル ＆ 編集モード切替 -->
+  <header class="app-header">
+    <h1 class="app-title">ND-Calc Pro</h1>
+    <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">⚙️ リストを編集</button>
+  </header>
+
+  <!-- 2. シャッタースピード -->
+  <div class="card">
+    <label class="section-title">現在のカメラのシャッタースピード（1/3 EV）</label>
+    <select id="base-ss" onchange="calculate()"></select>
+
+    <div class="bulb-input-container" id="bulb-container">
+      <input type="number" id="bulb-seconds" value="10" min="1" max="3600" oninput="calculate()">
+      <span>秒 (バルブ露光)</span>
+    </div>
+  </div>
+
+  <!-- 3. 固定NDフィルター選択エリア -->
+  <div class="card" id="fixed-card">
+    <span class="section-title">固定ND
+      <span class="sub-note">※タップでON/OFF</span>
+    </span>
+    <div class="card-visibility-container" id="fixed-visibility-container">
+      <input type="checkbox" id="fixed-card-checkbox" onchange="toggleCardVisibility('fixed', this.checked)" title="表示する">
+    </div>
+
+    <div id="filter-groups-container">
+      <!-- JavaScriptで自動描画されます -->
+    </div>
+  </div>
+
+  <!-- 4. バリアブルND -->
+  <div class="card" id="vnd-card">
+    <label class="section-title section-title-highlight">■ バリアブルND (82mm / ND2-32可変)</label>
+    <select id="vnd-select" onchange="calculate()">
+      <option value="1">使用しない (OFF)</option>
+      <option value="2">ND2</option>
+      <option value="4">ND4</option>
+      <option value="8">ND8</option>
+      <option value="16">ND16</option>
+      <option value="32">ND32</option>
+    </select>
+    <div class="card-visibility-container" id="vnd-visibility-container">
+      <input type="checkbox" id="vnd-card-checkbox" onchange="toggleCardVisibility('vnd', this.checked)" title="表示する">
+    </div>
+  </div>
+
+  <!-- 5. 角型フィルター -->
+  <div class="card" id="square-card">
+    <span class="section-title section-title-highlight">■ 角型フィルター
+      <span class="sub-note">※タップでON/OFF</span>
+    </span>
+    <div class="card-visibility-container" id="square-visibility-container">
+      <input type="checkbox" id="square-card-checkbox" onchange="toggleCardVisibility('square', this.checked)" title="表示する">
+    </div>
+    <div class="filter-grid" id="square-filter-grid">
+      <!-- JavaScriptで自動描画されます -->
+    </div>
+  </div>
+
+  <!-- 6. 合成ND -->
+  <div class="card nd-summary-card">
+    <span class="section-title">合成 ND 値</span>
+    <div class="nd-value" id="total-nd">ND 1</div>
+  </div>
+
+  <!-- 7. 結果とタイマー -->
+  <div class="card result-card">
+    <span class="section-title">計算された露出時間</span>
+    <div class="time-display" id="display-time">
+      00<span class="time-unit">h</span> 00<span class="time-unit">m</span> 01<span class="time-unit">s</span>
+    </div>
+    <button class="timer-btn" id="timer-btn" onclick="toggleTimer()">START TIMER</button>
+  </div>
+
+</div>
+
+<script>
+const defaultFixedFilters = [
+  { id: 'f1', group: '77mm', name: 'PL (ND2-4相当)', val: 4, sub: '', isVisible: true },
+  { id: 'f2', group: '77mm', name: 'ND400', val: 400, sub: '', isVisible: true },
+  { id: 'f3', group: '77mm', name: 'ND1000', val: 1000, sub: '', isVisible: true },
+  { id: 'f4', group: '82mm', name: 'CPL (ND2-4相当)', val: 4, sub: '', isVisible: true },
+  { id: 'f5', group: '82mm', name: 'ND8', val: 8, sub: 'マグネット', isVisible: true },
+  { id: 'f6', group: '82mm', name: 'ND1000', val: 1000, sub: 'マグネット', isVisible: true },
+  { id: 'f7', group: '82mm', name: 'ND1000000', val: 1000000, sub: '', isVisible: true }
+];
+
+const defaultSquareFilters = [
+  { id: 's1', group: '角型', name: 'ND4', val: 4, sub: '', isVisible: true },
+  { id: 's2', group: '角型', name: 'ND32', val: 32, sub: '', isVisible: true }
+];
+
+let fixedFilters = [];
+let squareFilters = [];
+let vndIsVisible = true;
+let activeFilterIds = new Set();
+let isEditMode = false;
+
+let calculatedSeconds = 1;
+let timerInterval = null;
+let remainingSeconds = 0;
+let isTimerRunning = false;
+
+const ssData13 = [
+  { label: "1/16000 秒", val: 1/16000 },
+  { label: "1/13000 秒", val: 1/13000 },
+  { label: "1/10000 秒", val: 1/10000 },
+  { label: "1/8000 秒", val: 1/8000 },
+  { label: "1/6400 秒", val: 1/6400 },
+  { label: "1/5000 秒", val: 1/5000 },
+  { label: "1/4000 秒", val: 1/4000 },
+  { label: "1/3200 秒", val: 1/3200 },
+  { label: "1/2500 秒", val: 1/2500 },
+  { label: "1/2000 秒", val: 1/2000 },
+  { label: "1/1600 秒", val: 1/1600 },
+  { label: "1/1250 秒", val: 1/1250 },
+  { label: "1/1000 秒", val: 1/1000 },
+  { label: "1/800 秒", val: 1/800 },
+  { label: "1/640 秒", val: 1/640 },
+  { label: "1/500 秒", val: 1/500 },
+  { label: "1/400 秒", val: 1/400 },
+  { label: "1/320 秒", val: 1/320 },
+  { label: "1/250 秒", val: 1/250 },
+  { label: "1/200 秒", val: 1/200 },
+  { label: "1/160 秒", val: 1/160 },
+  { label: "1/125 秒", val: 1/125 },
+  { label: "1/100 秒", val: 1/100 },
+  { label: "1/80 秒", val: 1/80 },
+  { label: "1/60 秒", val: 1/60 },
+  { label: "1/50 秒", val: 1/50 },
+  { label: "1/40 秒", val: 1/40 },
+  { label: "1/30 秒", val: 1/30 },
+  { label: "1/25 秒", val: 1/25 },
+  { label: "1/20 秒", val: 1/20 },
+  { label: "1/15 秒", val: 1/15 },
+  { label: "1/13 秒", val: 1/13 },
+  { label: "1/10 秒", val: 1/10 },
+  { label: "1/8 秒", val: 1/8 },
+  { label: "1/6 秒", val: 1/6 },
+  { label: "1/5 秒", val: 1/5 },
+  { label: "1/4 秒", val: 1/4 },
+  { label: "0.3 秒 (1/3.2)", val: 0.3 },
+  { label: "0.4 秒 (1/2.5)", val: 0.4 },
+  { label: "0.5 秒 (1/2)", val: 0.5 },
+  { label: "0.6 秒 (1/1.6)", val: 0.625 },
+  { label: "0.8 秒 (1/1.3)", val: 0.769 },
+  { label: "1 秒", val: 1 },
+  { label: "1.3 秒", val: 1.3 },
+  { label: "1.6 秒", val: 1.6 },
+  { label: "2 秒", val: 2 },
+  { label: "2.5 秒", val: 2.5 },
+  { label: "3.2 秒", val: 3.2 },
+  { label: "4 秒", val: 4 },
+  { label: "5 秒", val: 5 },
+  { label: "6 秒", val: 6 },
+  { label: "8 秒", val: 8 },
+  { label: "10 秒", val: 10 },
+  { label: "13 秒", val: 13 },
+  { label: "15 秒", val: 15 },
+  { label: "20 秒", val: 20 },
+  { label: "25 秒", val: 25 },
+  { label: "30 秒", val: 30 },
+  { label: "40 秒", val: 40 },
+  { label: "50 秒", val: 50 },
+  { label: "60 秒", val: 60 }
+];
+
+function loadStoredFilters() {
+  const storedFixed = localStorage.getItem('ndcalc_fixed_filters_v10');
+  const storedSquare = localStorage.getItem('ndcalc_square_filters_v10');
+  const storedVndVis = localStorage.getItem('ndcalc_vnd_visible_v10');
+
+  fixedFilters = storedFixed ? JSON.parse(storedFixed) : [...defaultFixedFilters];
+  squareFilters = storedSquare ? JSON.parse(storedSquare) : [...defaultSquareFilters];
+  vndIsVisible = storedVndVis !== null ? JSON.parse(storedVndVis) : true;
+}
+
+function saveFilters() {
+  localStorage.setItem('ndcalc_fixed_filters_v10', JSON.stringify(fixedFilters));
+  localStorage.setItem('ndcalc_square_filters_v10', JSON.stringify(squareFilters));
+  localStorage.setItem('ndcalc_vnd_visible_v10', JSON.stringify(vndIsVisible));
+}
+
+function init() {
+  loadStoredFilters();
+
+  const ssSelect = document.getElementById('base-ss');
+  ssSelect.innerHTML = '';
+  
+  ssData13.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.val;
+    opt.innerText = item.label;
+    if (Math.abs(item.val - 0.001) < 0.000001) { 
+      opt.selected = true;
+    }
+    ssSelect.appendChild(opt);
+  });
+
+  const bulbOpt = document.createElement('option');
+  bulbOpt.value = "bulb";
+  bulbOpt.innerText = "B (バルブ露光)";
+  ssSelect.appendChild(bulbOpt);
+
+  renderUI();
+  calculate();
+}
+
+function renderUI() {
+  const container = document.getElementById('filter-groups-container');
+  container.innerHTML = '';
+
+  const groups = {};
+  fixedFilters.forEach(item => {
+    if (!groups[item.group]) groups[item.group] = [];
+    groups[item.group].push(item);
+  });
+
+  Object.keys(groups).forEach(groupName => {
+    const groupWrapper = document.createElement('div');
+    groupWrapper.className = 'filter-group-wrapper';
+
+    const groupTitle = document.createElement('div');
+    groupTitle.className = 'group-title';
+    groupTitle.innerText = `■ ${groupName}`;
+    groupWrapper.appendChild(groupTitle);
+
+    const grid = document.createElement('div');
+    grid.className = 'filter-grid';
+
+    let visibleCountInGroup = 0;
+    groups[groupName].forEach(item => {
+      const el = createFilterElement(item);
+      grid.appendChild(el);
+      if (item.isVisible) visibleCountInGroup++;
+    });
+
+    groupWrapper.appendChild(grid);
+
+    if (visibleCountInGroup === 0) {
+      groupWrapper.classList.add('all-hidden');
+    }
+
+    container.appendChild(groupWrapper);
+  });
+
+  const fixedCard = document.getElementById('fixed-card');
+  const fixedCheckbox = document.getElementById('fixed-card-checkbox');
+  let hasAnyFixedVisible = fixedFilters.some(f => f.isVisible);
+  fixedCheckbox.checked = hasAnyFixedVisible;
+
+  const vndCard = document.getElementById('vnd-card');
+  const vndCheckbox = document.getElementById('vnd-card-checkbox');
+  vndCheckbox.checked = vndIsVisible;
+
+  if (!vndIsVisible) {
+    vndCard.classList.add('hidden-card');
+  } else {
+    vndCard.classList.remove('hidden-card');
+  }
+
+  const squareGrid = document.getElementById('square-filter-grid');
+  squareGrid.innerHTML = '';
+  const squareCard = document.getElementById('square-card');
+  const squareCheckbox = document.getElementById('square-card-checkbox');
+  let hasAnySquareVisible = squareFilters.some(f => f.isVisible);
+  squareCheckbox.checked = hasAnySquareVisible;
+
+  squareFilters.forEach(item => {
+    const el = createFilterElement(item);
+    squareGrid.appendChild(el);
+  });
+
+  if (!hasAnySquareVisible) {
+    squareCard.classList.add('hidden-card');
+  } else {
+    squareCard.classList.remove('hidden-card');
+  }
+}
+
+function createFilterElement(item) {
+  const wrapper = document.createElement('div');
+  wrapper.className = `filter-btn-wrapper ${!item.isVisible ? 'hidden-wrapper' : ''}`;
+
+  const btn = document.createElement('div');
+  btn.className = `filter-btn ${activeFilterIds.has(item.id) ? 'active' : ''}`;
+  btn.setAttribute('data-id', item.id);
+  btn.setAttribute('data-value', item.val);
+  
+  let subHtml = item.sub ? `<span class="sub-label">${item.sub}</span>` : '';
+  btn.innerHTML = `${subHtml}${item.name}`;
+
+  btn.onclick = () => {
+    if (isEditMode) return;
+    if (activeFilterIds.has(item.id)) {
+      activeFilterIds.delete(item.id);
+      btn.classList.remove('active');
+    } else {
+      activeFilterIds.add(item.id);
+      btn.classList.add('active');
+    }
+    calculate();
+  };
+
+  const checkboxContainer = document.createElement('div');
+  checkboxContainer.className = 'visibility-checkbox-container';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = item.isVisible;
+  checkbox.title = "表示する";
+  checkbox.onchange = (e) => {
+    e.stopPropagation();
+    item.isVisible = checkbox.checked;
+    if (!item.isVisible) {
+      activeFilterIds.delete(item.id);
+    }
+    saveFilters();
+    renderUI();
+    calculate();
+  };
+
+  checkboxContainer.appendChild(checkbox);
+
+  wrapper.appendChild(btn);
+  wrapper.appendChild(checkboxContainer);
+  return wrapper;
+}
+
+function toggleCardVisibility(type, isVisible) {
+  if (type === 'fixed') {
+    fixedFilters.forEach(f => f.isVisible = isVisible);
+  } else if (type === 'square') {
+    squareFilters.forEach(f => f.isVisible = isVisible);
+    if (!isVisible) {
+      squareFilters.forEach(f => activeFilterIds.delete(f.id));
+    }
+  } else if (type === 'vnd') {
+    vndIsVisible = isVisible;
+    if (!isVisible) {
+      document.getElementById('vnd-select').value = "1";
+    }
+  }
+  saveFilters();
+  renderUI();
+  calculate();
+}
+
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  const mainContainer = document.getElementById('main-container');
+  const toggleBtn = document.getElementById('edit-toggle-btn');
+
+  if (isEditMode) {
+    mainContainer.classList.add('edit-mode');
+    toggleBtn.classList.add('active');
+    toggleBtn.innerText = '✔️ 完了';
+  } else {
+    mainContainer.classList.remove('edit-mode');
+    toggleBtn.classList.remove('active');
+    toggleBtn.innerText = '⚙️ リストを編集';
+  }
+  renderUI();
+}
+
+function calculate() {
+  let totalND = 1;
+
+  const allFilters = [...fixedFilters, ...squareFilters];
+  activeFilterIds.forEach(id => {
+    const item = allFilters.find(f => f.id === id);
+    if (item && item.isVisible) totalND *= item.val;
+  });
+
+  if (vndIsVisible) {
+    const vndValue = parseFloat(document.getElementById('vnd-select').value) || 1;
+    totalND *= vndValue;
+  }
+
+  const baseSSSelect = document.getElementById('base-ss');
+  const bulbContainer = document.getElementById('bulb-container');
+  let baseSS = 0;
+
+  if (baseSSSelect.value === "bulb") {
+    bulbContainer.classList.add('active');
+    const bulbSec = parseFloat(document.getElementById('bulb-seconds').value) || 1;
+    baseSS = bulbSec;
+  } else {
+    bulbContainer.classList.remove('active');
+    baseSS = parseFloat(baseSSSelect.value);
+  }
+
+  calculatedSeconds = baseSS * totalND;
+
+  document.getElementById('total-nd').innerText = "ND " + totalND.toLocaleString();
+
+  if (!isTimerRunning) {
+    updateDisplay(calculatedSeconds);
+  }
+}
+
+function updateDisplay(sec) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.round(sec % 60);
+
+  const pad = (num) => String(num).padStart(2, '0');
+
+  document.getElementById('display-time').innerHTML = 
+    `${pad(h)}<span class="time-unit">h</span> ` +
+    `${pad(m)}<span class="time-unit">m</span> ` +
+    `${pad(s)}<span class="time-unit">s</span>`;
+}
+
+function playBeep() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.value = 0.1;
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+  } catch(e) {}
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timer-btn');
+
+  if (isTimerRunning) {
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+    btn.innerText = "START TIMER";
+    btn.classList.remove('running');
+    updateDisplay(calculatedSeconds);
+  } else {
+    remainingSeconds = Math.round(calculatedSeconds);
+    if (remainingSeconds < 1) remainingSeconds = 1;
+
+    isTimerRunning = true;
+    btn.innerText = "STOP TIMER";
+    btn.classList.add('running');
+
+    timerInterval = setInterval(() => {
+      remainingSeconds--;
+      updateDisplay(remainingSeconds);
+
+      if (remainingSeconds <= 0) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        btn.innerText = "START TIMER";
+        btn.classList.remove('running');
+        playBeep();
+        alert("露光が完了しました！");
+        updateDisplay(calculatedSeconds);
+      }
+    }, 1000);
+  }
+}
+
+window.onload = init;
+</script>
+
+</body>
+</html>

@@ -42,23 +42,17 @@
     transition: background-color 0.2s ease;
   }
 
-  /* 終了時の強力なフラッシュ演出 */
-  body.flash-effect {
-    background-color: #ffffff !important;
-  }
-
-  body.flash-effect .card {
-    background-color: #ffffff !important;
-    color: #ffffff !important;
-    border-color: #ffffff !important;
-    box-shadow: none !important;
-  }
-
-  body.flash-effect * {
-    color: transparent !important;
-    background: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
+  /* 終了時の強力なフラッシュ演出（全画面オーバーレイ方式） */
+  body.flash-effect::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 9999;
+    pointer-events: none;
   }
 
   .container {
